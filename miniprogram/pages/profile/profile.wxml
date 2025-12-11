@@ -1,0 +1,91 @@
+<!--pages/profile/profile.wxml-->
+<view class="container">
+  <scroll-view class="profile-scroll" scroll-y="true">
+    <!-- 用户信息 -->
+    <view class="user-info-card">
+      <view class="user-header" wx:if="{{isLogin}}">
+        <image class="user-avatar" src="{{userInfo.avatar}}"></image>
+        <view class="user-detail">
+          <view class="user-name">{{userInfo.nickName}}</view>
+          <view class="user-meta">
+            <text wx:if="{{userInfo.certified}}" class="certified-badge">已认证</text>
+            <text class="user-school">{{userInfo.school}}</text>
+          </view>
+        </view>
+        <view class="edit-btn" bindtap="editProfile">编辑</view>
+      </view>
+      
+      <view class="login-prompt" wx:else>
+        <view class="login-btn" bindtap="login">微信登录</view>
+        <text class="login-tip">登录后可发布和购买书籍</text>
+      </view>
+    </view>
+
+    <!-- 我的发布 -->
+    <view class="section-card" wx:if="{{isLogin}}">
+      <view class="section-title">我的发布</view>
+      <view class="goods-list">
+        <view class="goods-item" wx:for="{{myGoods}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+          <image class="goods-cover" src="{{item.coverUrl}}" mode="aspectFill"></image>
+          <view class="goods-info">
+            <view class="goods-name">{{item.bookName}}</view>
+            <view class="goods-price">¥{{item.price}}</view>
+          </view>
+          <view class="goods-status">{{item.statusText}}</view>
+        </view>
+        
+        <view class="empty-tip" wx:if="{{myGoods.length === 0}}">
+          <text>暂无发布，</text>
+          <text class="link-text" bindtap="goToPublish">去发布</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 功能列表 -->
+    <view class="menu-card" wx:if="{{isLogin}}">
+      <view class="menu-item" bindtap="goToOrders">
+        <view class="menu-left">
+          <image class="menu-icon" src="../../images/order.png"></image>
+          <text class="menu-text">我的订单</text>
+        </view>
+        <image class="arrow-right" src="../../images/arrow-right.png"></image>
+      </view>
+      
+      <view class="menu-item" bindtap="goToCollect">
+        <view class="menu-left">
+          <image class="menu-icon" src="../../images/collect.png"></image>
+          <text class="menu-text">我的收藏</text>
+        </view>
+        <image class="arrow-right" src="../../images/arrow-right.png"></image>
+      </view>
+      
+      <view class="menu-item" bindtap="certifyStudent">
+        <view class="menu-left">
+          <image class="menu-icon" src="../../images/cert.png"></image>
+          <text class="menu-text">学生认证</text>
+        </view>
+        <text class="menu-status" wx:if="{{userInfo.certified}}">已认证</text>
+        <image class="arrow-right" src="../../images/arrow-right.png"></image>
+      </view>
+    </view>
+
+    <!-- 设置 -->
+    <view class="menu-card" wx:if="{{isLogin}}">
+      <view class="menu-item" bindtap="goToAbout">
+        <view class="menu-left">
+          <image class="menu-icon" src="../../images/about.png"></image>
+          <text class="menu-text">关于我们</text>
+        </view>
+        <image class="arrow-right" src="../../images/arrow-right.png"></image>
+      </view>
+      
+      <view class="menu-item" bindtap="logout">
+        <view class="menu-left">
+          <image class="menu-icon" src="../../images/logout.png"></image>
+          <text class="menu-text">退出登录</text>
+        </view>
+        <image class="arrow-right" src="../../images/arrow-right.png"></image>
+      </view>
+    </view>
+  </scroll-view>
+</view>

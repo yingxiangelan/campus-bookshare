@@ -1,0 +1,9 @@
+com\campus\bookshare\controller\ReviewController.class
+com\campus\bookshare\controller\UserController.class
+com\campus\bookshare\controller\MessageController.class
+com\campus\bookshare\controller\GoodsController.class
+com\campus\bookshare\controller\OrderController.class
+com\campus\bookshare\Application.class
+com\campus\bookshare\controller\BookController.class
+com\campus\bookshare\common\Result.class
+com\campus\bookshare\controller\FileController.class
