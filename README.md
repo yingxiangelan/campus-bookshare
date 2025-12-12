@@ -149,7 +149,7 @@ globalData: {
 
 4. 编译运行
 
-项目构建可以查看[docs/STARTUP_GUIDE.md](.docs/STARTUP_GUIDE.md)
+项目构建可以查看[docs/STARTUP_GUIDE.md](docs/STARTUP_GUIDE.md)
    
 ## API接口文档
 
