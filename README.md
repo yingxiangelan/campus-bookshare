@@ -149,6 +149,8 @@ globalData: {
 
 4. 编译运行
 
+项目构建可以查看docs/STARTUP_GUIDE.md
+   
 ## API接口文档
 
 ### 用户相关
