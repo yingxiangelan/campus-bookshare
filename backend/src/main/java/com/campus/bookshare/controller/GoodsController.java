@@ -47,7 +47,7 @@ public class GoodsController {
         detail.put("originalPrice", 139.00);
         detail.put("price", 80.00);
         detail.put("condition", "9成新");
-        detail.put("campus", "东校区");
+        detail.put("campus", "国际校区");
         detail.put("major", "计算机科学与技术");
         detail.put("courseName", "计算机组成原理");
         detail.put("description", "书籍保存完好，无笔记，适合计算机专业学生");
@@ -115,7 +115,7 @@ public class GoodsController {
         item1.put("price", 80.00);
         item1.put("originalPrice", 139.00);
         item1.put("condition", "9成新");
-        item1.put("campus", "东校区");
+        item1.put("campus", "国际校区");
         item1.put("major", "计算机科学与技术");
         item1.put("coverUrl", "https://dummyimage.com/300x400");
         item1.put("status", 0);
@@ -129,7 +129,7 @@ public class GoodsController {
         item2.put("price", 50.00);
         item2.put("originalPrice", 89.00);
         item2.put("condition", "8成新");
-        item2.put("campus", "西校区");
+        item2.put("campus", "五山校区");
         item2.put("major", "软件工程");
         item2.put("coverUrl", "https://dummyimage.com/300x400");
         item2.put("status", 0);
@@ -143,7 +143,7 @@ public class GoodsController {
         item3.put("price", 35.00);
         item3.put("originalPrice", 59.00);
         item3.put("condition", "9成新");
-        item3.put("campus", "东校区");
+        item3.put("campus", "国际校区");
         item3.put("major", "计算机科学与技术");
         item3.put("coverUrl", "https://dummyimage.com/300x400");
         item3.put("status", 0);
