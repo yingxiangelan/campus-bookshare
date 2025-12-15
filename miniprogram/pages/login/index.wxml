@@ -1,0 +1,46 @@
+<view class="container">
+  <!-- Logo区域 -->
+  <view class="header">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+    <view class="app-name">Campus BookShare</view>
+  </view>
+
+  <!-- 登录按钮区域 -->
+  <view class="login-box">
+    <!-- 协议勾选 -->
+    <view class="agreement">
+      <checkbox-group bindchange="handleAgreement">
+        <label class="checkbox-label">
+          <checkbox value="agree" checked="{{isAgreed}}" color="#07c160" style="transform:scale(0.7)"/>
+          <text class="text">我已阅读并同意《用户协议》和《隐私政策》</text>
+        </label>
+      </checkbox-group>
+    </view>
+
+    <!-- 登录按钮 -->
+    <button class="login-btn" bindtap="handleLogin">微信一键登录</button>
+    <view class="cancel-btn" bindtap="handleCancel">暂不登录</view>
+  </view>
+
+  <!-- 授权完善信息弹窗 -->
+  <page-container show="{{showAuth}}" round position="bottom" custom-style="height: 40%">
+    <view class="auth-box">
+      <view class="auth-title">完善你的校园身份</view>
+      <view class="auth-desc">请设置头像和昵称以展示给同学</view>
+      
+      <view class="form-row">
+        <text>头像</text>
+        <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+          <image class="user-avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}"></image>
+        </button>
+      </view>
+
+      <view class="form-row border-top">
+        <text>昵称</text>
+        <input type="nickname" class="nickname-input" placeholder="请输入昵称" bindchange="onNicknameChange"/>
+      </view>
+
+      <button class="submit-btn" bindtap="submitUserInfo">进入书圈</button>
+    </view>
+  </page-container>
+</view>

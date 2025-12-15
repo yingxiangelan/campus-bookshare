@@ -1,0 +1,21 @@
+<!--pages/message/message.wxml-->
+<view class="container">
+  <scroll-view class="message-list" scroll-y="true">
+    <view class="message-item" wx:for="{{messageList}}" wx:key="id" bindtap="openChat" data-user-id="{{item.userId}}">
+      <image class="user-avatar" src="{{item.avatar}}"></image>
+      <view class="message-content">
+        <view class="message-header">
+          <text class="user-name">{{item.userName}}</text>
+          <text class="message-time">{{item.time}}</text>
+        </view>
+        <view class="message-text">{{item.lastMessage}}</view>
+      </view>
+      <view class="unread-badge" wx:if="{{item.unreadCount > 0}}">{{item.unreadCount}}</view>
+    </view>
+
+    <view class="empty-state" wx:if="{{messageList.length === 0}}">
+      <image class="empty-icon" src="../../images/empty.png"></image>
+      <text class="empty-text">暂无消息</text>
+    </view>
+  </scroll-view>
+</view>

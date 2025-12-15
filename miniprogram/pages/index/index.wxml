@@ -1,0 +1,85 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 搜索栏 (保留原样) -->
+  <view class="search-bar">
+    <view class="search-input" bindtap="onSearchTap">
+      <image class="search-icon" src="../../images/search.png" mode="aspectFit"></image>
+      <text class="search-placeholder">搜索书名、作者、ISBN...</text>
+    </view>
+  </view>
+
+  <!-- 筛选栏 (保留原样) -->
+  <view class="filter-bar">
+    <view class="filter-item" bindtap="showCampusFilter">
+      <text>{{currentCampus || '校区'}}</text>
+      <image class="arrow-icon" src="../../images/arrow-down.png"></image>
+    </view>
+    <view class="filter-item" bindtap="showMajorFilter">
+      <text>{{currentMajor || '专业'}}</text>
+      <image class="arrow-icon" src="../../images/arrow-down.png"></image>
+    </view>
+    <view class="filter-item" bindtap="showSortFilter">
+      <text>{{currentSort}}</text>
+      <image class="arrow-icon" src="../../images/arrow-down.png"></image>
+    </view>
+  </view>
+
+  <!-- 书籍列表 -->
+  <scroll-view class="book-list" scroll-y="true" bindscrolltolower="loadMore">
+    <view class="book-item" wx:for="{{bookList}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+      <!-- 封面图：后端字段 coverUrl -->
+      <image class="book-cover" src="{{item.coverUrl}}" mode="aspectFill"></image>
+      
+      <view class="book-info">
+        <!-- 书名 -->
+        <view class="book-title">{{item.bookName}}</view>
+        <!-- 作者 -->
+        <view class="book-author">{{item.author}}</view>
+        
+        <view class="book-tags">
+          <!-- 专业：如果后端没传 major，暂时显示 '通用'，防止样式塌陷 -->
+          <view class="tag tag-primary">{{item.major || '通用'}}</view>
+          
+          <!-- 成色：后端字段 condition -->
+          <view class="tag tag-success" wx:if="{{item.condition}}">{{item.condition}}</view>
+        </view>
+        
+        <view class="book-footer">
+          <!-- 价格 -->
+          <view class="book-price">¥{{item.price}}</view>
+          <!-- 校区 -->
+          <view class="book-campus">{{item.campus}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 加载状态 -->
+    <view class="loading" wx:if="{{loading}}">加载中...</view>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{!loading && bookList.length === 0}}">
+      <image class="empty-icon" src="../../images/empty.png"></image>
+      <text class="empty-text">暂无书籍</text>
+    </view>
+  </scroll-view>
+
+  <!-- 筛选弹窗 (保留原样) -->
+  <view class="filter-modal" wx:if="{{showFilter}}" bindtap="hideFilter">
+    <view class="filter-content" catchtap="stopPropagation">
+      <view class="filter-header">
+        <text class="filter-title">{{filterTitle}}</text>
+        <image class="close-icon" src="../../images/close.png" bindtap="hideFilter"></image>
+      </view>
+      <view class="filter-list">
+        <view 
+          class="filter-option {{filterValue === item ? 'active' : ''}}" 
+          wx:for="{{filterOptions}}" 
+          wx:key="index"
+          bindtap="selectFilter"
+          data-value="{{item}}">
+          {{item}}
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

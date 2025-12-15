@@ -1,0 +1,116 @@
+<!--pages/publish/publish.wxml-->
+<view class="container">
+  <scroll-view class="publish-scroll" scroll-y="true">
+    <!-- 快速识别 -->
+    <view class="quick-scan-box">
+      <view class="scan-title">快速发布</view>
+      <view class="scan-buttons">
+        <view class="scan-btn" bindtap="scanISBN">
+          <image class="scan-icon" src="../../images/scan.png"></image>
+          <text>扫描ISBN码</text>
+        </view>
+        <view class="scan-btn" bindtap="recognizeImage">
+          <image class="scan-icon" src="../../images/camera.png"></image>
+          <text>拍照识别</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 上传图片 -->
+    <view class="form-section">
+      <view class="section-title">商品图片</view>
+      <view class="upload-box">
+        <view class="image-item" wx:for="{{images}}" wx:key="index">
+          <image class="uploaded-image" src="{{item}}" mode="aspectFill"></image>
+          <view class="delete-icon" bindtap="deleteImage" data-index="{{index}}">×</view>
+        </view>
+        <view class="upload-btn" wx:if="{{images.length < 9}}" bindtap="chooseImage">
+          <image class="upload-icon" src="../../images/add.png"></image>
+          <text class="upload-text">{{images.length}}/9</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 书籍信息 -->
+    <view class="form-section">
+      <view class="section-title">书籍信息</view>
+      
+      <view class="input-wrapper">
+        <view class="input-label">书名 *</view>
+        <input class="input" placeholder="请输入书名" value="{{formData.bookName}}" bindinput="onInputChange" data-field="bookName" />
+      </view>
+
+      <view class="input-wrapper">
+        <view class="input-label">作者</view>
+        <input class="input" placeholder="请输入作者" value="{{formData.author}}" bindinput="onInputChange" data-field="author" />
+      </view>
+
+      <view class="input-wrapper">
+        <view class="input-label">出版社</view>
+        <input class="input" placeholder="请输入出版社" value="{{formData.publisher}}" bindinput="onInputChange" data-field="publisher" />
+      </view>
+
+      <view class="input-wrapper">
+        <view class="input-label">ISBN</view>
+        <input class="input" placeholder="请输入ISBN码" value="{{formData.isbn}}" bindinput="onInputChange" data-field="isbn" />
+      </view>
+    </view>
+
+    <!-- 售卖信息 -->
+    <view class="form-section">
+      <view class="section-title">售卖信息</view>
+      
+      <view class="input-wrapper">
+        <view class="input-label">价格 *</view>
+        <input class="input price-input" type="digit" placeholder="请输入价格" value="{{formData.price}}" bindinput="onInputChange" data-field="price">
+          <text class="price-unit">元</text>
+        </input>
+        <view class="price-suggest" wx:if="{{suggestedPrice}}">
+          建议价格: ¥{{suggestedPrice}}
+        </view>
+      </view>
+
+      <view class="input-wrapper">
+        <view class="input-label">原价</view>
+        <input class="input" type="digit" placeholder="选填" value="{{formData.originalPrice}}" bindinput="onInputChange" data-field="originalPrice" />
+      </view>
+
+      <view class="input-wrapper">
+        <view class="input-label">新旧程度 *</view>
+        <picker class="picker" mode="selector" range="{{conditionOptions}}" value="{{conditionIndex}}" bindchange="onConditionChange">
+          <view class="picker-value">{{conditionOptions[conditionIndex] || '请选择'}}</view>
+        </picker>
+      </view>
+
+      <view class="input-wrapper">
+        <view class="input-label">校区 *</view>
+        <picker class="picker" mode="selector" range="{{campusOptions}}" value="{{campusIndex}}" bindchange="onCampusChange">
+          <view class="picker-value">{{campusOptions[campusIndex] || '请选择'}}</view>
+        </picker>
+      </view>
+
+      <view class="input-wrapper">
+        <view class="input-label">专业</view>
+        <picker class="picker" mode="selector" range="{{majorOptions}}" value="{{majorIndex}}" bindchange="onMajorChange">
+          <view class="picker-value">{{majorOptions[majorIndex] || '请选择'}}</view>
+        </picker>
+      </view>
+
+      <view class="input-wrapper">
+        <view class="input-label">适用课程</view>
+        <input class="input" placeholder="请输入课程名称" value="{{formData.courseName}}" bindinput="onInputChange" data-field="courseName" />
+      </view>
+
+      <view class="input-wrapper">
+        <view class="input-label">商品描述</view>
+        <textarea class="textarea" placeholder="请描述书籍的使用情况、笔记情况等" value="{{formData.description}}" bindinput="onInputChange" data-field="description" maxlength="500" />
+        <view class="char-count">{{formData.description.length}}/500</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部按钮 -->
+  <view class="bottom-buttons">
+    <view class="submit-btn" bindtap="submitPublish">发布</view>
+  </view>
+</view>

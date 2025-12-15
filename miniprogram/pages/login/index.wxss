@@ -1,0 +1,22 @@
+page { background-color: #fff; }
+.container { display: flex; flex-direction: column; align-items: center; padding-top: 100rpx; }
+.header { display: flex; flex-direction: column; align-items: center; margin-bottom: 150rpx; }
+.logo { width: 180rpx; height: 180rpx; border-radius: 20rpx; margin-bottom: 20rpx; }
+.app-name { font-size: 36rpx; font-weight: bold; color: #333; }
+
+.login-box { width: 80%; }
+.agreement { display: flex; font-size: 24rpx; color: #666; margin-bottom: 40rpx; justify-content: center;}
+.checkbox-label { display: flex; align-items: center; }
+.login-btn { background-color: #07c160; color: #fff; border-radius: 50rpx; font-weight: normal; margin-bottom: 30rpx; }
+.cancel-btn { text-align: center; font-size: 28rpx; color: #999; }
+
+/* 弹窗样式 */
+.auth-box { padding: 40rpx; }
+.auth-title { font-size: 32rpx; font-weight: bold; margin-bottom: 10rpx; }
+.auth-desc { font-size: 26rpx; color: #999; margin-bottom: 40rpx; }
+.form-row { display: flex; align-items: center; justify-content: space-between; padding: 20rpx 0; }
+.border-top { border-top: 1rpx solid #eee; }
+.avatar-btn { background: none; padding: 0; margin: 0; width: 80rpx !important; height: 80rpx; }
+.user-avatar { width: 80rpx; height: 80rpx; border-radius: 10rpx; background: #eee; }
+.nickname-input { text-align: right; color: #333; }
+.submit-btn { margin-top: 50rpx; background-color: #07c160; color: #fff; border-radius: 50rpx; }

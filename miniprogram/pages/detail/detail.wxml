@@ -1,0 +1,89 @@
+<!--pages/detail/detail.wxml-->
+<view class="container">
+  <scroll-view class="detail-scroll" scroll-y="true">
+    <!-- 图片轮播 -->
+    <swiper class="book-swiper" indicator-dots="true" autoplay="false" circular="true">
+      <swiper-item wx:for="{{bookDetail.images}}" wx:key="index">
+        <image class="swiper-image" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-url="{{item}}"></image>
+      </swiper-item>
+    </swiper>
+
+    <!-- 基本信息 -->
+    <view class="info-card">
+      <view class="book-title">{{bookDetail.bookName}}</view>
+      <view class="book-meta">
+        <text class="book-author">{{bookDetail.author}}</text>
+        <text class="book-publisher">{{bookDetail.publisher}}</text>
+      </view>
+      <view class="book-price-box">
+        <view class="current-price">¥{{bookDetail.price}}</view>
+        <view class="original-price">原价: ¥{{bookDetail.originalPrice}}</view>
+      </view>
+      <view class="book-tags-box">
+        <view class="tag tag-primary">{{bookDetail.major}}</view>
+        <view class="tag tag-success">{{bookDetail.condition}}</view>
+        <view class="tag">{{bookDetail.campus}}</view>
+      </view>
+    </view>
+
+    <!-- 卖家信息 -->
+    <view class="seller-card">
+      <view class="card-title">卖家信息</view>
+      <view class="seller-info">
+        <image class="seller-avatar" src="{{bookDetail.sellerAvatar}}"></image>
+        <view class="seller-detail">
+          <view class="seller-name">{{bookDetail.sellerName}}</view>
+          <view class="seller-meta">
+            <text wx:if="{{bookDetail.sellerCertified}}" class="certified-badge">已认证</text>
+            <text class="seller-rate">好评率: {{bookDetail.sellerRate}}%</text>
+          </view>
+        </view>
+        <view class="contact-btn" bindtap="contactSeller">联系</view>
+      </view>
+    </view>
+
+    <!-- 商品详情 -->
+    <view class="detail-card">
+      <view class="card-title">商品详情</view>
+      <view class="detail-item">
+        <text class="detail-label">ISBN:</text>
+        <text class="detail-value">{{bookDetail.isbn}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="detail-label">课程:</text>
+        <text class="detail-value">{{bookDetail.courseName}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="detail-label">新旧程度:</text>
+        <text class="detail-value">{{bookDetail.condition}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="detail-label">发布时间:</text>
+        <text class="detail-value">{{bookDetail.publishTime}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="detail-label">浏览次数:</text>
+        <text class="detail-value">{{bookDetail.viewCount}}次</text>
+      </view>
+    </view>
+
+    <!-- 商品描述 -->
+    <view class="desc-card">
+      <view class="card-title">商品描述</view>
+      <view class="desc-content">{{bookDetail.description || '暂无描述'}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="bar-item" bindtap="collectBook">
+      <image class="bar-icon" src="{{bookDetail.isCollected ? '../../images/star-active.png' : '../../images/star.png'}}"></image>
+      <text class="bar-text">{{bookDetail.isCollected ? '已收藏' : '收藏'}}</text>
+    </view>
+    <view class="bar-item" bindtap="contactSeller">
+      <image class="bar-icon" src="../../images/chat.png"></image>
+      <text class="bar-text">联系卖家</text>
+    </view>
+    <view class="buy-btn" bindtap="buyBook">我想要</view>
+  </view>
+</view>
