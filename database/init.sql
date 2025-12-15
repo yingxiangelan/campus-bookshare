@@ -138,8 +138,8 @@ CREATE TABLE IF NOT EXISTS `collect` (
 
 -- 测试用户
 INSERT INTO `user` (`openid`, `nick_name`, `avatar`, `student_id`, `school`, `major`, `campus`, `certified`) VALUES
-('test_openid_1', '张同学', 'https://via.placeholder.com/150', '20210001', '某某大学', '计算机科学与技术', '东校区', 1),
-('test_openid_2', '李同学', 'https://via.placeholder.com/150', '20210002', '某某大学', '软件工程', '西校区', 1);
+('test_openid_1', '张同学', 'https://via.placeholder.com/150', '20210001', '某某大学', '计算机科学与技术', '国际校区', 1),
+('test_openid_2', '李同学', 'https://via.placeholder.com/150', '20210002', '某某大学', '软件工程', '五山校区', 1);
 
 -- 测试书籍
 INSERT INTO `book` (`isbn`, `book_name`, `author`, `publisher`, `price`, `cover_url`) VALUES
@@ -149,9 +149,9 @@ INSERT INTO `book` (`isbn`, `book_name`, `author`, `publisher`, `price`, `cover_
 
 -- 测试商品
 INSERT INTO `goods` (`user_id`, `book_id`, `book_name`, `author`, `publisher`, `isbn`, `original_price`, `price`, `condition`, `campus`, `major`, `course_name`, `description`, `images`, `status`) VALUES
-(1, 1, '深入理解计算机系统', 'Randal E.Bryant', '机械工业出版社', '9787111544937', 139.00, 80.00, '9成新', '东校区', '计算机科学与技术', '计算机组成原理', '书籍保存完好，无笔记，适合计算机专业学生', '["https://via.placeholder.com/600x800"]', 0),
-(2, 2, 'Python编程：从入门到实践', 'Eric Matthes', '人民邮电出版社', '9787115428028', 89.00, 50.00, '8成新', '西校区', '软件工程', 'Python程序设计', '有少量笔记，不影响阅读', '["https://via.placeholder.com/600x800"]', 0),
-(1, 3, '数据结构与算法分析', 'Mark Allen Weiss', '清华大学出版社', '9787302511991', 59.00, 35.00, '9成新', '东校区', '计算机科学与技术', '数据结构', '全新，未使用过', '["https://via.placeholder.com/600x800"]', 0);
+(1, 1, '深入理解计算机系统', 'Randal E.Bryant', '机械工业出版社', '9787111544937', 139.00, 80.00, '9成新', '国际校区', '计算机科学与技术', '计算机组成原理', '书籍保存完好，无笔记，适合计算机专业学生', '["https://via.placeholder.com/600x800"]', 0),
+(2, 2, 'Python编程：从入门到实践', 'Eric Matthes', '人民邮电出版社', '9787115428028', 89.00, 50.00, '8成新', '五山校区', '软件工程', 'Python程序设计', '有少量笔记，不影响阅读', '["https://via.placeholder.com/600x800"]', 0),
+(1, 3, '数据结构与算法分析', 'Mark Allen Weiss', '清华大学出版社', '9787302511991', 59.00, 35.00, '9成新', '国际校区', '计算机科学与技术', '数据结构', '全新，未使用过', '["https://via.placeholder.com/600x800"]', 0);
 
 -- 设置字符集
 ALTER DATABASE campus_bookshare CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
