@@ -40,7 +40,7 @@ public class UserController {
         userInfo.put("studentId", "20210001");
         userInfo.put("school", "某某大学");
         userInfo.put("major", "计算机科学与技术");
-        userInfo.put("campus", "东校区");
+        userInfo.put("campus", "国际校区");
         userInfo.put("certified", true);
         
         data.put("userInfo", userInfo);
@@ -60,7 +60,7 @@ public class UserController {
         userInfo.put("studentId", "20210001");
         userInfo.put("school", "某某大学");
         userInfo.put("major", "计算机科学与技术");
-        userInfo.put("campus", "东校区");
+        userInfo.put("campus", "国际校区");
         userInfo.put("certified", true);
         
         return Result.success(userInfo);
