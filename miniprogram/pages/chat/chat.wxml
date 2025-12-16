@@ -1,0 +1,26 @@
+<view class="chat-container">
+  <!-- 消息滚动区域 -->
+  <scroll-view scroll-y scroll-into-view="{{toView}}" class="chat-content" style="height: {{scrollHeight}}px;">
+    <view wx:for="{{msgList}}" wx:key="id" id="msg-{{index}}" class="chat-item {{item.isMy ? 'chat-item-right' : 'chat-item-left'}}">
+      
+      <!-- 对方头像 -->
+      <image wx:if="{{!item.isMy}}" class="avatar" src="{{targetAvatar || '/images/default-avatar.png'}}"></image>
+      
+      <!-- 消息气泡 -->
+      <view class="bubble">
+        <text>{{item.content}}</text>
+      </view>
+
+      <!-- 我的头像 -->
+      <image wx:if="{{item.isMy}}" class="avatar" src="{{myAvatar || '/images/default-avatar.png'}}"></image>
+    </view>
+    <!-- 占位，防止最后一条消息被输入框挡住 -->
+    <view style="height: 120rpx;"></view>
+  </scroll-view>
+
+  <!-- 底部输入框 -->
+  <view class="footer">
+    <input class="input-box" value="{{inputValue}}" bindinput="onInput" confirm-type="send" bindconfirm="sendMsg" placeholder="输入消息..." />
+    <button class="send-btn" bindtap="sendMsg">发送</button>
+  </view>
+</view>

@@ -1,342 +1,586 @@
-# 校园二手书交易平台 - Campus BookShare
+# 📚 校园二手书交易平台 - Campus BookShare
 
-面向校内场景的大学生二手书交易平台微信小程序完整Demo
+<p align="center">
+  <img src="docs/logo.png" alt="Campus BookShare" width="120">
+</p>
 
-## 项目简介
+<p align="center">
+  <strong>面向校园场景的大学生二手书交易平台</strong>
+</p>
 
-本项目是一个完整的校园二手书交易平台，包含微信小程序前端和Spring Boot后端，旨在为大学生提供便捷、高效的二手书交易服务。
+<p align="center">
+  <img src="https://img.shields.io/badge/前端-微信小程序-07C160?logo=wechat" alt="WeChat Mini Program">
+  <img src="https://img.shields.io/badge/后端-Spring%20Boot%202.7-6DB33F?logo=spring" alt="Spring Boot">
+  <img src="https://img.shields.io/badge/识别服务-Python%20FastAPI-009688?logo=fastapi" alt="FastAPI">
+  <img src="https://img.shields.io/badge/数据库-MySQL%208.0-4479A1?logo=mysql" alt="MySQL">
+  <img src="https://img.shields.io/badge/实时通信-WebSocket-010101?logo=socket.io" alt="WebSocket">
+</p>
 
-## 主要功能
+---
 
-### 前端功能
-- ✅ 微信授权登录
-- ✅ 书籍列表浏览（支持校区、专业、排序筛选）
-- ✅ 书籍详情查看
-- ✅ 快速发布（支持扫描ISBN码、拍照识别）
-- ✅ 智能价格建议
-- ✅ 消息聊天
-- ✅ 个人中心（我的发布、订单、收藏）
-- ✅ 学生身份认证
+## 📋 目录
 
-### 后端功能
-- ✅ 用户管理（注册、登录、认证）
-- ✅ 书籍管理（标准书籍库、商品管理）
-- ✅ 订单管理
-- ✅ 消息管理
-- ✅ 文件上传
-- ✅ 评价系统
-- ✅ 收藏系统
+- [项目简介](#项目简介)
+- [功能特性](#功能特性)
+- [系统架构](#系统架构)
+- [技术栈](#技术栈)
+- [项目结构](#项目结构)
+- [快速开始](#快速开始)
+- [API文档](#api文档)
+- [开发指南](#开发指南)
+- [部署说明](#部署说明)
+- [常见问题](#常见问题)
+- [更新日志](#更新日志)
+- [贡献指南](#贡献指南)
 
-## 技术栈
+---
 
-### 前端
-- 微信小程序原生框架
-- WXML + WXSS + JavaScript
-- 微信小程序API
+## 📖 项目简介
 
-### 后端
-- Spring Boot 2.7.18
-- MyBatis Plus 3.5.3
-- MySQL 8.0
-- JWT 认证
-- Hutool 工具库
+**Campus BookShare** 是一个专为大学生设计的二手书交易平台，旨在解决校园内教材流转效率低、信息不对称的问题。通过微信小程序提供便捷的发布、搜索、交易和沟通功能。
 
-## 项目结构
+### 🎯 解决的问题
+
+| 痛点 | 解决方案 |
+|------|---------|
+| 教材昂贵，使用周期短 | 二手书交易，节省开支 |
+| 找书困难，信息分散 | 按校区/专业/课程筛选 |
+| 交易沟通不便 | 实时WebSocket聊天 |
+| 手动输入书籍信息繁琐 | ISBN扫码/拍照智能识别 |
+
+---
+
+## ✨ 功能特性
+
+### 📱 小程序端功能
+
+| 模块 | 功能 | 状态 |
+|------|------|------|
+| **首页** | 书籍列表、多维度筛选(校区/专业/排序)、下拉刷新 | ✅ 已完成 |
+| **详情页** | 图片轮播、商品信息、卖家信息、收藏/联系/购买 | ✅ 已完成 |
+| **发布** | ISBN扫码识别、拍照OCR识别、多图上传、智能定价 | ✅ 已完成 |
+| **消息** | 消息列表、未读提示、实时聊天(WebSocket) | ✅ 已完成 |
+| **个人中心** | 微信登录、我的发布、学生认证、设置 | ✅ 已完成 |
+
+### 🖥️ 后端服务功能
+
+| 模块 | 功能 | 状态 |
+|------|------|------|
+| **用户管理** | 微信登录、JWT认证、学生认证 | ✅ 已完成 |
+| **商品管理** | CRUD、分页查询、状态管理 | ✅ 已完成 |
+| **消息系统** | REST API + WebSocket实时推送 | ✅ 已完成 |
+| **订单系统** | 订单创建、状态流转 | ✅ 已完成 |
+| **数据导入** | JSON/Excel批量导入 | ✅ 已完成 |
+| **文件上传** | 图片上传存储 | ✅ 已完成 |
+
+### 🐍 Python识别服务
+
+| 功能 | 说明 | 状态 |
+|------|------|------|
+| **ISBN条码识别** | 支持EAN-13条码扫描 | ✅ 已完成 |
+| **二维码识别** | 支持QR Code解析 | ✅ 已完成 |
+| **书籍信息查询** | 本地SQLite书籍库匹配 | ✅ 已完成 |
+| **结果持久化** | 识别结果JSON保存 | ✅ 已完成 |
+
+---
+
+## 🏗️ 系统架构
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                          微信小程序客户端                                  │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌────────┐ │
+│  │  首页    │ │ 详情页   │ │  发布   │ │  消息    │ │  聊天    │ │ 个人   │ │
+│  └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘ └────┬───┘ │
+│       │           │           │           │           │           │     │
+│  ┌────┴───────────┴───────────┴───────────┴───────────┴───────────┴───┐ │
+│  │                         utils/ (工具层)                             │ │
+│  │  request.js │ api.js │ socket.js │ util.js                         │ │
+│  └────────────────────────────────────────────────────────────────────┘ │
+└──────────────────────────────┬──────────────────────────────────────────┘
+                               │
+           ┌───────────────────┼───────────────────┐
+           │ HTTP REST API     │ WebSocket         │
+           ▼                   ▼                   ▼
+┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+│  Spring Boot    │  │  WebSocket      │  │  Python FastAPI │
+│  后端服务        │  │  实时消息服务      │  │  识别微服务      │
+│  Port: 8080     │  │  /websocket/{id}│  │  Port: 8000     │
+├─────────────────┤  ├─────────────────┤  ├─────────────────┤
+│ • UserController│  │ • 连接管理        │  │ • /api/scan     │
+│ • GoodsController│ │ • 消息推送        │  │ • 条码识别       │
+│ • MessageController│• 在线状态         │  │ • 书籍查询       │
+│ • OrderController│ │ • 心跳检测        │  │                 │
+│ • DataImportController               │  │                 │
+└────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+         │                    │                    │
+         ▼                    ▼                    ▼
+┌─────────────────────────────────────┐  ┌─────────────────┐
+│           MySQL 数据库               │  │  SQLite (本地)   │
+│  user│book│goods│order│message│...  │  │  campus_books   │
+└─────────────────────────────────────┘  └─────────────────┘
+```
+
+---
+
+## 🛠️ 技术栈
+
+### 前端 (微信小程序)
+
+| 技术 | 版本 | 说明 |
+|------|------|------|
+| 微信小程序框架 | - | 原生开发 |
+| WXML/WXSS | - | 模板与样式 |
+| JavaScript | ES6+ | 业务逻辑 |
+| WebSocket | - | 实时通信 |
+
+### 后端 (Java)
+
+| 技术 | 版本 | 说明 |
+|------|------|------|
+| Spring Boot | 2.7.18 | 基础框架 |
+| MyBatis Plus | 3.5.3.1 | ORM框架 |
+| MySQL | 8.0+ | 主数据库 |
+| JWT | 0.9.1 | 身份认证 |
+| WebSocket | - | 实时消息 |
+| FastJSON2 | 2.0.40 | JSON处理 |
+| Hutool | 5.8.20 | 工具库 |
+| Apache POI | 5.2.3 | Excel处理 |
+
+### 识别服务 (Python)
+
+| 技术 | 版本 | 说明 |
+|------|------|------|
+| Python | 3.8+ | 运行环境 |
+| FastAPI | latest | Web框架 |
+| OpenCV | headless | 图像处理 |
+| pyzbar | latest | 条码解析 |
+| SQLite | 3 | 本地书籍库 |
+
+---
+
+## 📁 项目结构
 
 ```
 campus-bookshare/
-├── miniprogram/              # 微信小程序前端
-│   ├── pages/               # 页面
-│   │   ├── index/          # 首页
-│   │   ├── detail/         # 详情页
-│   │   ├── publish/        # 发布页
-│   │   ├── message/        # 消息页
-│   │   └── profile/        # 个人中心
-│   ├── components/          # 组件
-│   ├── utils/              # 工具类
-│   │   ├── request.js      # 网络请求封装
-│   │   ├── api.js          # API接口定义
-│   │   └── util.js         # 通用工具函数
-│   ├── images/             # 图片资源
-│   ├── app.js              # 全局逻辑
-│   ├── app.json            # 全局配置
-│   └── app.wxss            # 全局样式
-├── backend/                 # Spring Boot后端
-│   ├── src/main/
-│   │   ├── java/com/campus/bookshare/
-│   │   │   ├── controller/    # 控制器
-│   │   │   ├── service/       # 服务层
-│   │   │   ├── mapper/        # 数据访问层
-│   │   │   ├── model/         # 数据模型
-│   │   │   ├── config/        # 配置类
-│   │   │   ├── utils/         # 工具类
-│   │   │   ├── common/        # 通用类
-│   │   │   └── Application.java  # 启动类
-│   │   └── resources/
-│   │       └── application.yml   # 配置文件
-│   └── pom.xml             # Maven配置
-├── database/               # 数据库
-│   └── init.sql           # 初始化SQL脚本
-└── docs/                  # 文档
-    └── README.md          # 项目说明
+├── 📂 miniprogram/                    # 微信小程序前端
+│   ├── 📂 pages/                      # 页面目录
+│   │   ├── 📂 index/                  # 首页
+│   │   │   ├── index.js
+│   │   │   ├── index.json
+│   │   │   ├── index.wxml
+│   │   │   └── index.wxss
+│   │   ├── 📂 detail/                 # 商品详情页
+│   │   ├── 📂 publish/                # 发布页
+│   │   ├── 📂 message/                # 消息列表页
+│   │   ├── 📂 chat/                   # 聊天详情页 ⭐新增
+│   │   ├── 📂 profile/                # 个人中心
+│   │   └── 📂 login/                  # 登录页
+│   ├── 📂 utils/                      # 工具类
+│   │   ├── request.js                 # HTTP请求封装
+│   │   ├── api.js                     # API接口定义
+│   │   ├── socket.js                  # WebSocket封装 ⭐新增
+│   │   └── util.js                    # 通用工具函数
+│   ├── 📂 images/                     # 图片资源
+│   ├── app.js                         # 全局逻辑
+│   ├── app.json                       # 全局配置
+│   └── app.wxss                       # 全局样式
+│
+├── 📂 backend/                        # Spring Boot后端
+│   ├── 📂 src/main/
+│   │   ├── 📂 java/com/campus/bookshare/
+│   │   │   ├── 📂 controller/         # 控制器
+│   │   │   │   ├── UserController.java
+│   │   │   │   ├── GoodsController.java
+│   │   │   │   ├── DataImportController.java
+│   │   │   │   └── OtherControllers.java
+│   │   │   ├── 📂 service/            # 服务层
+│   │   │   │   ├── UserService.java
+│   │   │   │   ├── GoodsService.java
+│   │   │   │   ├── BookService.java
+│   │   │   │   └── 📂 impl/
+│   │   │   ├── 📂 mapper/             # 数据访问层
+│   │   │   ├── 📂 entity/             # 实体类
+│   │   │   ├── 📂 dto/                # 数据传输对象
+│   │   │   ├── 📂 common/             # 通用类
+│   │   │   ├── 📂 config/             # 配置类 ⭐新增
+│   │   │   │   └── WebSocketConfig.java
+│   │   │   ├── 📂 socket/             # WebSocket ⭐新增
+│   │   │   │   └── WebSocketServer.java
+│   │   │   └── 📂 util/               # 工具类
+│   │   └── 📂 resources/
+│   │       ├── 📂 mapper/             # MyBatis XML
+│   │       └── application.yml        # 配置文件
+│   └── pom.xml                        # Maven配置
+│
+├── 📂 CodeDetection/                  # Python识别服务 ⭐新增
+│   ├── CodeDetection.py               # FastAPI主服务
+│   ├── init_db.py                     # 数据库初始化
+│   ├── requirements.txt               # Python依赖
+│   ├── campus_books.db                # 书籍数据库
+│   └── 📂 scan_results/               # 识别结果保存
+│
+├── 📂 database/                       # 数据库脚本
+│   └── init.sql                       # MySQL初始化
+│
+├── 📂 docs/                           # 文档
+│   ├── STARTUP_GUIDE.md               # 启动指南
+│   ├── DATABASE_INTEGRATION.md        # 数据库集成说明
+│   └── FIX_LOGBYJSQ.md               # 修复日志
+│
+└── README.md                          # 项目说明
 ```
 
-## 快速开始
+---
+
+## 🚀 快速开始
 
 ### 环境要求
 
-#### 前端
-- 微信开发者工具
-- Node.js 14+（可选，用于开发）（暂时没有用微信云开发功能）
+| 环境 | 版本要求 | 说明 |
+|------|---------|------|
+| JDK | 1.8+ | Java运行环境 |
+| Maven | 3.6+ | 依赖管理 |
+| MySQL | 8.0+ | 主数据库 |
+| Node.js | 14+ | (可选) |
+| Python | 3.8+ | 识别服务 |
+| 微信开发者工具 | 最新版 | 小程序开发 |
 
-#### 后端
-- JDK 1.8+
-- Maven 3.6+
-- MySQL 8.0+
+### 第一步：数据库初始化
 
-### 数据库配置
+```bash
+# 1. 登录MySQL
+mysql -u root -p
 
-1. 创建数据库并导入初始数据：
+# 2. 执行初始化脚本
+source /path/to/campus-bookshare/database/init.sql
+```
+
+也可以直接创建数据库并导入初始数据
+
 ```bash
 mysql -u root -p < database/init.sql
 ```
 
-2. 修改后端配置文件 `backend/src/main/resources/application.yml`：
-```yaml
+### 第二步：启动Spring Boot后端
+
+```bash
+# 1. 进入后端目录
+cd backend
+
+# 2. 修改配置文件
+# 编辑 src/main/resources/application.yml
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/campus_bookshare?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: your_username
     password: your_password
-```
+# 修改数据库连接信息
 
-### 后端启动
-
-1. 进入后端目录：
-```bash
-cd backend
-```
-
-2. 安装依赖：
-```bash
-mvn clean install
-```
-
-3. 启动项目：
-```bash
+# 3. 编译运行
+mvn clean compile
 mvn spring-boot:run
 ```
 
-或者直接运行：
+验证：访问 http://localhost:8080/api 应返回成功
+
+### 第三步：启动Python识别服务
+
 ```bash
-java -jar target/bookshare-1.0.0.jar
+# 1. 进入识别服务目录
+cd CodeDetection
+
+# 2. 创建虚拟环境 (推荐)
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+
+# 3. 安装依赖
+pip install -r requirements.txt
+
+# 4. 初始化书籍数据库
+python init_db.py
+
+# 5. 启动服务
+python CodeDetection.py
 ```
 
-服务将在 http://localhost:8080/api 启动
+验证：访问 http://localhost:8000/docs 查看API文档
 
-### 前端启动
+### 第四步：启动微信小程序
 
-1. 使用微信开发者工具打开 `miniprogram` 目录
-
-2. 修改 `app.js` 中的 `baseUrl` 为你的后端地址：
-```javascript
-globalData: {
-  baseUrl: 'http://localhost:8080/api'  // 修改为实际后端地址
-}
-```
-
-3. 配置微信小程序 AppID（测试环境可使用测试号）
-
+1. 打开微信开发者工具
+2. 导入 `miniprogram` 目录
+3. 修改 `app.js` 中的 `baseUrl`
 4. 编译运行
-
-## API接口文档
-
-### 用户相关
-- `POST /user/login` - 用户登录
-- `GET /user/info` - 获取用户信息
-- `PUT /user/profile` - 更新用户信息
-- `POST /user/certify` - 学生认证
-
-### 书籍相关
-- `GET /book/list` - 获取书籍列表
-- `GET /book/detail/:id` - 获取书籍详情
-- `GET /book/search` - 搜索书籍
-- `GET /book/isbn/:isbn` - 根据ISBN获取书籍
-- `POST /book/recognize` - 图像识别
-
-### 商品相关
-- `POST /goods/publish` - 发布商品
-- `GET /goods/list` - 获取商品列表
-- `GET /goods/detail/:id` - 获取商品详情
-- `GET /goods/my` - 获取我的商品
-- `PUT /goods/:id/status` - 更新商品状态
-- `DELETE /goods/:id` - 删除商品
-
-### 订单相关
-- `POST /order/create` - 创建订单
-- `GET /order/list` - 获取订单列表
-- `GET /order/detail/:id` - 获取订单详情
-- `PUT /order/:id/confirm` - 确认订单
-- `PUT /order/:id/cancel` - 取消订单
-
-### 消息相关
-- `GET /message/list` - 获取消息列表
-- `GET /message/conversation/:userId` - 获取对话
-- `POST /message/send` - 发送消息
-- `PUT /message/read` - 标记已读
-
-### 文件相关
-- `POST /file/upload` - 上传文件
-
-## 核心功能实现
-
-### 1. 扫描ISBN码识别
-```javascript
-// 前端调用
-wx.scanCode({
-  onlyFromCamera: true,
-  scanType: ['barCode'],
-  success: (res) => {
-    const isbn = res.result;
-    // 调用后端API获取书籍信息
-    api.book.getByISBN(isbn);
-  }
-});
-```
-
-### 2. 图像识别（OCR）
-```javascript
-// 拍照上传后调用OCR识别
-api.file.upload(imagePath).then(imageUrl => {
-  return api.book.recognizeImage(imageUrl);
-}).then(bookInfo => {
-  // 自动填充书籍信息
-  this.fillBookInfo(bookInfo);
-});
-```
-
-### 3. 智能价格建议
-```javascript
-// 根据原价计算建议价格
-const suggestedPrice = originalPrice * 0.6;
-```
-
-### 4. 多维度筛选
-- 校区筛选
-- 专业筛选
-- 排序方式（最新发布、价格低到高、价格高到低）
-
-## 数据库设计
-
-### 主要表结构
-
-- `user` - 用户表
-- `book` - 书籍信息表（标准库）
-- `goods` - 商品表（用户发布）
-- `order` - 订单表
-- `message` - 消息表
-- `review` - 评价表
-- `collect` - 收藏表
-
-详细字段请查看 `database/init.sql`
-
-## 配置说明
-
-### 微信小程序配置
-
-在 `backend/src/main/resources/application.yml` 中配置微信小程序信息：
-
-```yaml
-wechat:
-  appid: your_appid
-  secret: your_secret
-```
-
-### JWT配置
-
-```yaml
-jwt:
-  secret: campus_bookshare_secret_key
-  expiration: 604800  # 7天，单位：秒
-```
-
-### 文件上传配置
-
-```yaml
-file:
-  upload-path: /data/uploads/
-  base-url: http://localhost:8080/api/files/
-```
-
-## 功能扩展建议
-
-### 短期优化
-1. 完善搜索功能（全文搜索、关键词高亮）
-2. 添加消息推送
-3. 实现实时聊天（WebSocket）
-4. 添加书籍推荐算法
-
-### 长期规划
-1. 接入第三方支付
-2. 引入信用评分系统
-3. 添加社区论坛功能
-4. 开发管理后台
-5. 数据统计分析
-
-## 注意事项
-
-1. **安全性**
-   - 生产环境请修改JWT密钥
-   - 配置HTTPS
-   - 实现完整的权限校验
-
-2. **性能优化**
-   - 添加Redis缓存
-   - 图片CDN加速
-   - 数据库索引优化
-
-3. **用户体验**
-   - 添加加载动画
-   - 优化图片加载
-   - 完善错误提示
-
-4. **测试**
-   - 编写单元测试
-   - 进行压力测试
-   - 用户验收测试
-
-## 常见问题
-
-### Q: 如何测试微信登录？
-A: 在微信开发者工具中可以使用测试号，或者暂时mock登录接口。
-
-### Q: 图像识别如何实现？
-A: 可以接入百度OCR、腾讯OCR等第三方服务，或使用开源OCR库。
-
-### Q: 如何部署到生产环境？
-A: 
-1. 购买服务器（阿里云、腾讯云等）
-2. 配置域名和SSL证书
-3. 部署MySQL数据库
-4. 打包并部署Spring Boot应用
-5. 在微信公众平台配置服务器域名
-6. 上传小程序代码审核
-
-## 开发团队
-
-- 项目经理 & 后端开发
-- 前端开发
-- 前端开发 & 测试
-- 产品与UI设计 & 后端开发
-
-## 许可证
-
-MIT License
-
-## 联系方式
-
-如有问题或建议，欢迎提Issue或联系开发团队。
 
 ---
 
-**注意：这是一个示例项目，仅供学习交流使用。生产环境使用前需要进行完善和安全加固。**
+## 📡 API文档
+
+### 用户接口
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| POST | `/user/login/wechat` | 微信登录 |
+| GET | `/user/info` | 获取用户信息 |
+| POST | `/user/updateUserInfo` | 更新用户信息 |
+| POST | `/user/certify` | 学生认证 |
+
+### 商品接口
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/goods/list` | 商品列表(分页) |
+| GET | `/goods/detail/{id}` | 商品详情 |
+| POST | `/goods/publish` | 发布商品 |
+| GET | `/goods/my` | 我的商品 |
+| PUT | `/goods/{id}/status` | 更新状态 |
+| DELETE | `/goods/{id}` | 删除商品 |
+
+### 消息接口
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/message/list` | 消息列表 |
+| GET | `/message/conversation/{userId}` | 获取对话 |
+| POST | `/message/send` | 发送消息 |
+
+### WebSocket接口
+
+```
+连接地址: ws://localhost:8080/websocket/{userId}
+
+发送消息格式:
+{
+  "toUserId": 102,
+  "content": "你好，书还在吗？",
+  "type": 1
+}
+
+接收消息格式:
+{
+  "fromUserId": 101,
+  "content": "在的，什么时候方便？",
+  "createTime": "2025-01-01 12:00:00"
+}
+```
+
+### 识别服务接口
+
+```
+POST http://localhost:8000/api/scan
+Content-Type: multipart/form-data
+
+请求: file=<图片文件>
+
+响应:
+{
+  "code": "200",
+  "msg": "操作成功",
+  "data": [
+    {
+      "code": "1",
+      "bookName": "深入理解计算机系统",
+      "author": "Randal E.Bryant",
+      "isbn": "9787111544937"
+    }
+  ]
+}
+```
+
+---
+
+## 💻 开发指南
+
+### 添加新页面
+
+1. 在 `miniprogram/pages/` 下创建目录
+2. 在 `app.json` 的 `pages` 数组中注册
+3. 实现页面逻辑
+
+### 添加新接口
+
+1. 在 `api.js` 中定义接口
+2. 后端创建对应Controller
+3. 实现Service和Mapper
+
+### WebSocket开发
+
+```javascript
+// 前端使用示例
+const socket = require('../../utils/socket.js');
+
+// 建立连接
+socket.connect();
+
+// 监听消息
+socket.onMessage((data) => {
+  console.log('收到消息:', data);
+});
+
+// 发送消息
+socket.send({
+  toUserId: 102,
+  content: '你好',
+  type: 1
+});
+
+// 关闭连接
+socket.close();
+```
+
+---
+
+## 🚢 部署说明
+
+### 生产环境配置
+
+```yaml
+# application.yml
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://your-db-host:3306/campus_bookshare
+    username: your_username
+    password: your_password
+
+wechat:
+  appid: your_real_appid
+  secret: your_real_secret
+```
+
+### Docker部署 (可选)
+
+```dockerfile
+# 后端Dockerfile
+FROM openjdk:8-jdk-alpine
+COPY target/bookshare-1.0.0.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
+```
+
+### Nginx配置
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name your-domain.com;
+    
+    # WebSocket代理
+    location /websocket/ {
+        proxy_pass http://localhost:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+    
+    # API代理
+    location /api/ {
+        proxy_pass http://localhost:8080;
+    }
+    
+    # 识别服务代理
+    location /scan/ {
+        proxy_pass http://localhost:8000;
+    }
+}
+```
+
+---
+
+## ❓ 常见问题
+
+### Q: WebSocket连接失败？
+
+A: 检查以下几点：
+1. 确保后端已启动
+2. 检查用户是否已登录
+3. 开发工具中关闭"不校验合法域名"
+
+### Q: 条码识别失败？
+
+A: 检查以下几点：
+1. Python服务是否启动
+2. 图片是否清晰
+3. 是否为有效ISBN条码
+
+### Q: 数据库连接失败？
+
+A: 检查以下几点：
+1. MySQL服务是否启动
+2. 用户名密码是否正确
+3. 数据库是否已创建
+
+---
+
+## 📝 更新日志
+
+### v1.3.0 
+
+- ✅ 完善ISBN识别功能
+- ✅ 实现书籍封面识别功能
+
+### v1.2.0 (订单系统)
+
+- ✅ 完整订单CRUD功能
+- ✅ 订单列表/详情页面
+- ✅ 订单状态流转
+- ✅ 买家/卖家双视角
+- ✅ 订单统计
+
+### v1.1.0 (2025-12-16)
+
+**新增功能：**
+- ✨ WebSocket实时聊天功能
+- ✨ Python条码/二维码识别服务
+- ✨ 聊天页面UI
+
+**改进优化：**
+- 🔧 消息列表跳转优化
+- 🔧 依赖版本更新
+
+### v1.0.0 (2025-12-14)
+
+**初始版本：**
+- 📱 微信小程序完整功能
+- 🖥️ Spring Boot后端服务
+- 📊 数据导入功能
+
+---
+
+## 🤝 贡献指南
+
+1. Fork 本项目
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送分支 (`git push origin feature/AmazingFeature`)
+5. 创建 Pull Request
+
+---
+
+## 📄 许可证
+
+MIT License - 详见 [LICENSE](LICENSE)
+
+---
+
+## 👥 开发团队
+
+| 角色 | 职责 |
+|------|------|
+| 项目负责人 | 架构设计、代码审核 |
+| 后端开发 | Spring Boot、数据库 |
+| 前端开发 | 微信小程序 |
+| 算法开发 | Python识别服务 |
+
+---
+
+<p align="center">
+  <strong>🎓 Campus BookShare - 让知识流动起来</strong>
+</p>
+
+<p align="center">
+  Made with ❤️ by Campus BookShare Team
+</p>

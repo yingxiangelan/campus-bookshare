@@ -1,0 +1,139 @@
+<!--pages/order/order.wxml-->
+<view class="container">
+  <!-- 统计卡片 -->
+  <view class="stats-card">
+    <view class="stat-item">
+      <text class="stat-value">{{stats.buyCount || 0}}</text>
+      <text class="stat-label">购买</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{stats.sellCount || 0}}</text>
+      <text class="stat-label">出售</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{stats.pendingCount || 0}}</text>
+      <text class="stat-label">待处理</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{stats.finishedCount || 0}}</text>
+      <text class="stat-label">已完成</text>
+    </view>
+  </view>
+
+  <!-- Tab切换 -->
+  <view class="tabs">
+    <view 
+      class="tab-item {{currentTab === item.key ? 'active' : ''}}" 
+      wx:for="{{tabs}}" 
+      wx:key="key"
+      data-tab="{{item.key}}"
+      bindtap="switchTab">
+      {{item.name}}
+    </view>
+  </view>
+
+  <!-- 状态筛选 -->
+  <scroll-view class="status-filter" scroll-x>
+    <view 
+      class="filter-item {{currentStatus === item.key ? 'active' : ''}}" 
+      wx:for="{{statusFilters}}" 
+      wx:key="key"
+      data-status="{{item.key}}"
+      bindtap="switchStatus">
+      {{item.name}}
+    </view>
+  </scroll-view>
+
+  <!-- 订单列表 -->
+  <view class="order-list">
+    <view class="order-item" wx:for="{{orderList}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+      <!-- 订单头部 -->
+      <view class="order-header">
+        <text class="order-no">订单号：{{item.orderNo}}</text>
+        <text class="order-status status-{{item.status}}">{{item.statusText}}</text>
+      </view>
+      
+      <!-- 商品信息 -->
+      <view class="goods-info" catchtap="goToGoods" data-goods-id="{{item.goodsId}}">
+        <image class="goods-image" src="{{item.goodsImage || '/images/default-book.png'}}" mode="aspectFill"></image>
+        <view class="goods-detail">
+          <text class="goods-name">{{item.goodsName}}</text>
+          <text class="goods-price">¥{{item.price}}</text>
+        </view>
+      </view>
+      
+      <!-- 对方信息 -->
+      <view class="user-info" wx:if="{{currentTab === 'buy'}}">
+        <image class="user-avatar" src="{{item.sellerAvatar || '/images/default-avatar.png'}}"></image>
+        <text class="user-name">卖家：{{item.sellerName || '用户'}}</text>
+      </view>
+      <view class="user-info" wx:elif="{{currentTab === 'sell'}}">
+        <image class="user-avatar" src="{{item.buyerAvatar || '/images/default-avatar.png'}}"></image>
+        <text class="user-name">买家：{{item.buyerName || '用户'}}</text>
+      </view>
+      <view class="user-info" wx:else>
+        <text class="user-role">{{item.isBuyer ? '我是买家' : '我是卖家'}}</text>
+      </view>
+      
+      <!-- 时间 -->
+      <view class="order-time">
+        <text>{{item.createTimeText}}</text>
+      </view>
+      
+      <!-- 操作按钮 -->
+      <view class="order-actions" catchtap="stopPropagation">
+        <!-- 待确认状态 -->
+        <block wx:if="{{item.status === 0}}">
+          <!-- 卖家可以确认 -->
+          <button 
+            wx:if="{{(currentTab === 'sell') || (currentTab === 'all' && !item.isBuyer)}}" 
+            class="btn btn-primary" 
+            size="mini" 
+            catchtap="confirmOrder" 
+            data-id="{{item.id}}">
+            确认订单
+          </button>
+          <!-- 双方都可以取消 -->
+          <button class="btn btn-default" size="mini" catchtap="cancelOrder" data-id="{{item.id}}">取消</button>
+        </block>
+        
+        <!-- 已确认状态 -->
+        <block wx:elif="{{item.status === 1}}">
+          <button class="btn btn-primary" size="mini" catchtap="finishOrder" data-id="{{item.id}}">完成交易</button>
+          <button class="btn btn-default" size="mini" catchtap="cancelOrder" data-id="{{item.id}}">取消</button>
+        </block>
+        
+        <!-- 已完成/已取消状态 -->
+        <block wx:else>
+          <button class="btn btn-default" size="mini" catchtap="goToGoods" data-goods-id="{{item.goodsId}}">查看商品</button>
+        </block>
+        
+        <!-- 联系对方按钮 -->
+        <button 
+          class="btn btn-chat" 
+          size="mini" 
+          catchtap="contactUser" 
+          data-user-id="{{item.isBuyer ? item.sellerId : item.buyerId}}"
+          data-goods-id="{{item.goodsId}}">
+          联系{{item.isBuyer ? '卖家' : '买家'}}
+        </button>
+      </view>
+    </view>
+    
+    <!-- 加载状态 -->
+    <view class="loading-tip" wx:if="{{loading}}">
+      <text>加载中...</text>
+    </view>
+    
+    <!-- 没有更多 -->
+    <view class="loading-tip" wx:if="{{!hasMore && orderList.length > 0}}">
+      <text>没有更多了</text>
+    </view>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{!loading && orderList.length === 0}}">
+      <image class="empty-icon" src="/images/empty.png" mode="aspectFit"></image>
+      <text class="empty-text">暂无订单</text>
+    </view>
+  </view>
+</view>

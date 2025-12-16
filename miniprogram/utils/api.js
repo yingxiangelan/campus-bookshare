@@ -37,14 +37,25 @@ module.exports = {
     markRead: (ids) => request.put('/message/read', { ids })
   },
 
-  // 订单相关
-  order: {
-    create: (data) => request.post('/order/create', data),
-    getList: (type) => request.get('/order/list', { type }),
-    getDetail: (id) => request.get(`/order/detail/${id}`),
-    confirm: (id) => request.put(`/order/${id}/confirm`),
-    cancel: (id) => request.put(`/order/${id}/cancel`)
-  },
+// 订单相关
+order: {
+  // 创建订单
+  create: (data) => request.post('/order/create', data),
+  // 获取订单列表 type: buy/sell/all, status: 0/1/2/3
+  getList: (params) => request.get('/order/list', params),
+  // 获取订单详情
+  getDetail: (id) => request.get(`/order/detail/${id}`),
+  // 卖家确认订单
+  confirm: (id) => request.put(`/order/${id}/confirm`),
+  // 完成订单
+  finish: (id) => request.put(`/order/${id}/finish`),
+  // 取消订单
+  cancel: (id, reason) => request.put(`/order/${id}/cancel`, { reason }),
+  // 获取订单统计
+  getStats: () => request.get('/order/stats'),
+  // 检查商品是否可购买
+  checkPurchase: (goodsId) => request.get(`/order/check/${goodsId}`)
+},
 
   // 评价相关
   review: {

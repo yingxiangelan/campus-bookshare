@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.bookshare.mapper.OrderMapper">
+    
+    <!-- 订单结果映射（包含关联信息） -->
+    <resultMap id="OrderDetailMap" type="com.campus.bookshare.entity.Order">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="buyer_id" property="buyerId"/>
+        <result column="seller_id" property="sellerId"/>
+        <result column="price" property="price"/>
+        <result column="status" property="status"/>
+        <result column="buyer_message" property="buyerMessage"/>
+        <result column="trade_location" property="tradeLocation"/>
+        <result column="confirm_time" property="confirmTime"/>
+        <result column="finish_time" property="finishTime"/>
+        <result column="cancel_time" property="cancelTime"/>
+        <result column="cancel_reason" property="cancelReason"/>
+        <result column="cancel_by" property="cancelBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <!-- 关联字段 -->
+        <result column="goods_name" property="goodsName"/>
+        <result column="goods_image" property="goodsImage"/>
+        <result column="buyer_name" property="buyerName"/>
+        <result column="buyer_avatar" property="buyerAvatar"/>
+        <result column="seller_name" property="sellerName"/>
+        <result column="seller_avatar" property="sellerAvatar"/>
+    </resultMap>
+    
+    <!-- 根据订单号查询 -->
+    <select id="selectByOrderNo" resultType="com.campus.bookshare.entity.Order">
+        SELECT * FROM `order`
+        WHERE order_no = #{orderNo}
+        LIMIT 1
+    </select>
+    
+    <!-- 查询买家订单列表 -->
+    <select id="selectBuyerOrders" resultMap="OrderDetailMap">
+        SELECT 
+            o.*,
+            g.book_name as goods_name,
+            SUBSTRING_INDEX(g.images, ',', 1) as goods_image,
+            seller.nick_name as seller_name,
+            seller.avatar as seller_avatar
+        FROM `order` o
+        LEFT JOIN goods g ON o.goods_id = g.id
+        LEFT JOIN user seller ON o.seller_id = seller.id
+        WHERE o.buyer_id = #{buyerId}
+        <if test="status != null">
+            AND o.status = #{status}
+        </if>
+        ORDER BY o.create_time DESC
+        <if test="offset != null and limit != null">
+            LIMIT #{offset}, #{limit}
+        </if>
+    </select>
+    
+    <!-- 查询卖家订单列表 -->
+    <select id="selectSellerOrders" resultMap="OrderDetailMap">
+        SELECT 
+            o.*,
+            g.book_name as goods_name,
+            SUBSTRING_INDEX(g.images, ',', 1) as goods_image,
+            buyer.nick_name as buyer_name,
+            buyer.avatar as buyer_avatar
+        FROM `order` o
+        LEFT JOIN goods g ON o.goods_id = g.id
+        LEFT JOIN user buyer ON o.buyer_id = buyer.id
+        WHERE o.seller_id = #{sellerId}
+        <if test="status != null">
+            AND o.status = #{status}
+        </if>
+        ORDER BY o.create_time DESC
+        <if test="offset != null and limit != null">
+            LIMIT #{offset}, #{limit}
+        </if>
+    </select>
+    
+    <!-- 查询订单详情（包含完整关联信息） -->
+    <select id="selectOrderDetail" resultMap="OrderDetailMap">
+        SELECT 
+            o.*,
+            g.book_name as goods_name,
+            SUBSTRING_INDEX(g.images, ',', 1) as goods_image,
+            buyer.nick_name as buyer_name,
+            buyer.avatar as buyer_avatar,
+            seller.nick_name as seller_name,
+            seller.avatar as seller_avatar
+        FROM `order` o
+        LEFT JOIN goods g ON o.goods_id = g.id
+        LEFT JOIN user buyer ON o.buyer_id = buyer.id
+        LEFT JOIN user seller ON o.seller_id = seller.id
+        WHERE o.id = #{id}
+    </select>
+    
+    <!-- 统计用户订单数量 -->
+    <select id="countUserOrders" resultType="java.util.Map">
+        SELECT 
+            COUNT(CASE WHEN buyer_id = #{userId} THEN 1 END) as buyCount,
+            COUNT(CASE WHEN seller_id = #{userId} THEN 1 END) as sellCount,
+            COUNT(CASE WHEN (buyer_id = #{userId} OR seller_id = #{userId}) AND status = 0 THEN 1 END) as pendingCount,
+            COUNT(CASE WHEN (buyer_id = #{userId} OR seller_id = #{userId}) AND status = 2 THEN 1 END) as finishedCount
+        FROM `order`
+        WHERE buyer_id = #{userId} OR seller_id = #{userId}
+    </select>
+    
+    <!-- 检查商品是否有进行中的订单 -->
+    <select id="countActiveOrdersByGoodsId" resultType="int">
+        SELECT COUNT(*) FROM `order`
+        WHERE goods_id = #{goodsId}
+        AND status IN (0, 1)
+    </select>
+    
+    <!-- 动态更新订单状态 -->
+    <update id="updateStatus">
+        UPDATE `order`
+        SET status = #{status},
+            update_time = NOW()
+            <if test="updateFields != null">
+                <if test="updateFields.confirmTime != null">
+                    , confirm_time = #{updateFields.confirmTime}
+                </if>
+                <if test="updateFields.finishTime != null">
+                    , finish_time = #{updateFields.finishTime}
+                </if>
+                <if test="updateFields.cancelTime != null">
+                    , cancel_time = #{updateFields.cancelTime}
+                </if>
+                <if test="updateFields.cancelReason != null">
+                    , cancel_reason = #{updateFields.cancelReason}
+                </if>
+                <if test="updateFields.cancelBy != null">
+                    , cancel_by = #{updateFields.cancelBy}
+                </if>
+            </if>
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 插入订单 -->
+    <insert id="insert" parameterType="com.campus.bookshare.entity.Order" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `order` (
+            order_no,
+            goods_id,
+            buyer_id,
+            seller_id,
+            price,
+            status,
+            buyer_message,
+            trade_location
+        ) VALUES (
+            #{orderNo},
+            #{goodsId},
+            #{buyerId},
+            #{sellerId},
+            #{price},
+            #{status},
+            #{buyerMessage},
+            #{tradeLocation}
+        )
+    </insert>
+    
+</mapper>

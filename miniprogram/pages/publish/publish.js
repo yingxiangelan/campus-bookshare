@@ -23,10 +23,10 @@ Page({
     conditionOptions: ['全新', '9成新', '8成新', '7成新', '6成新及以下'],
     conditionIndex: -1,
     
-    campusOptions: ['东校区', '西校区', '南校区', '北校区'],
+    campusOptions: ['国际校区', '五山校区', '大学城校区'],
     campusIndex: -1,
     
-    majorOptions: ['计算机科学与技术', '软件工程', '电子信息工程', '机械工程', '金融学', '会计学', '英语', '汉语言文学'],
+    majorOptions: ['人工智能','大数据','计算机科学与技术', '软件工程', '电子信息工程', '机械工程', '金融学', '会计学', '英语', '汉语言文学'],
     majorIndex: -1,
     
     suggestedPrice: ''

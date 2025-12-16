@@ -1,0 +1,62 @@
+<!--pages/login/index.wxml-->
+<view class="container">
+  <!-- Logo区域 -->
+  <view class="logo-section">
+    <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+    <text class="title">校园二手书</text>
+    <text class="subtitle">让知识流转，让书香延续</text>
+  </view>
+
+  <!-- 未授权时显示：登录按钮 -->
+  <view class="login-section" wx:if="{{!showAuth}}">
+    <!-- 协议勾选 -->
+    <view class="agreement">
+      <checkbox-group bindchange="handleAgreement">
+        <label class="agreement-label">
+          <checkbox value="agreed" checked="{{isAgreed}}" />
+          <text>我已阅读并同意</text>
+          <text class="link">《用户协议》</text>
+          <text>和</text>
+          <text class="link">《隐私政策》</text>
+        </label>
+      </checkbox-group>
+    </view>
+
+    <!-- 登录按钮 -->
+    <button class="login-btn {{isAgreed ? '' : 'disabled'}}" 
+            bindtap="handleLogin">
+      微信一键登录
+    </button>
+  </view>
+
+  <!-- 已获取Token后显示：头像昵称授权 -->
+  <view class="auth-section" wx:if="{{showAuth}}">
+    <view class="auth-title">完善个人信息</view>
+    
+    <!-- 头像选择 -->
+    <view class="avatar-wrapper">
+      <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image class="avatar" 
+               src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" 
+               mode="aspectFill"></image>
+        <view class="avatar-tip">点击选择头像</view>
+      </button>
+    </view>
+    
+    <!-- 昵称输入 -->
+    <view class="nickname-wrapper">
+      <text class="label">昵称</text>
+      <input class="nickname-input" 
+             type="nickname" 
+             placeholder="请输入昵称"
+             value="{{userInfo.nickName}}"
+             bindinput="onNicknameChange" />
+    </view>
+    
+    <!-- 提交按钮 -->
+    <view class="btn-group">
+      <button class="submit-btn" bindtap="submitUserInfo">确认</button>
+      <button class="cancel-btn" bindtap="handleCancel">跳过</button>
+    </view>
+  </view>
+</view>

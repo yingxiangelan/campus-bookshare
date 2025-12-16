@@ -1,25 +1,32 @@
 <!--pages/profile/profile.wxml-->
 <view class="container">
   <scroll-view class="profile-scroll" scroll-y="true">
-    <!-- 用户信息 -->
+    
+    <!-- ================= 修改开始：头部用户信息卡片 ================= -->
     <view class="user-info-card">
+      <!-- 情况A: 已登录 -->
       <view class="user-header" wx:if="{{isLogin}}">
-        <image class="user-avatar" src="{{userInfo.avatar}}"></image>
+        <!-- 注意：这里改成了 avatarUrl，为了和后端数据库字段一致 -->
+        <image class="user-avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}"></image>
         <view class="user-detail">
           <view class="user-name">{{userInfo.nickName}}</view>
           <view class="user-meta">
             <text wx:if="{{userInfo.certified}}" class="certified-badge">已认证</text>
-            <text class="user-school">{{userInfo.school}}</text>
+            <text class="user-school">{{userInfo.school || '未设置学校'}}</text>
           </view>
         </view>
         <view class="edit-btn" bindtap="editProfile">编辑</view>
       </view>
       
+      <!-- 情况B: 未登录 (点击跳转到我们写的登录页) -->
       <view class="login-prompt" wx:else>
-        <view class="login-btn" bindtap="login">微信登录</view>
+        <view class="login-btn" bindtap="goToLogin">微信一键登录</view>
         <text class="login-tip">登录后可发布和购买书籍</text>
       </view>
     </view>
+    <!-- ================= 修改结束 ================= -->
+
+    <!-- 下面的代码我原封不动保留了你的，不要动 -->
 
     <!-- 我的发布 -->
     <view class="section-card" wx:if="{{isLogin}}">

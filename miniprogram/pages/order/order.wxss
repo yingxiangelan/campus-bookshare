@@ -1,0 +1,270 @@
+/* pages/order/order.wxss */
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 20rpx;
+}
+
+/* 统计卡片 */
+.stats-card {
+  display: flex;
+  justify-content: space-around;
+  background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+  padding: 30rpx 20rpx;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(74, 144, 226, 0.3);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-value {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 8rpx;
+}
+
+/* Tab切换 */
+.tabs {
+  display: flex;
+  background-color: #fff;
+  border-bottom: 1rpx solid #eee;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+}
+
+.tab-item.active {
+  color: #4A90E2;
+  font-weight: 500;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 4rpx;
+  background-color: #4A90E2;
+  border-radius: 2rpx;
+}
+
+/* 状态筛选 */
+.status-filter {
+  white-space: nowrap;
+  background-color: #fff;
+  padding: 16rpx 20rpx;
+  border-bottom: 1rpx solid #eee;
+}
+
+.filter-item {
+  display: inline-block;
+  padding: 12rpx 24rpx;
+  margin-right: 16rpx;
+  font-size: 24rpx;
+  color: #666;
+  background-color: #f5f5f5;
+  border-radius: 24rpx;
+}
+
+.filter-item.active {
+  color: #fff;
+  background-color: #4A90E2;
+}
+
+/* 订单列表 */
+.order-list {
+  padding: 20rpx;
+}
+
+.order-item {
+  background-color: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 订单头部 */
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.order-no {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.order-status {
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.order-status.status-0 {
+  color: #ff9500;
+}
+
+.order-status.status-1 {
+  color: #4A90E2;
+}
+
+.order-status.status-2 {
+  color: #52c41a;
+}
+
+.order-status.status-3 {
+  color: #999;
+}
+
+/* 商品信息 */
+.goods-info {
+  display: flex;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.goods-image {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 8rpx;
+  background-color: #f5f5f5;
+}
+
+.goods-detail {
+  flex: 1;
+  margin-left: 20rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.goods-name {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.goods-price {
+  font-size: 32rpx;
+  color: #ff4d4f;
+  font-weight: 500;
+  margin-top: 16rpx;
+}
+
+/* 用户信息 */
+.user-info {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+}
+
+.user-avatar {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  margin-right: 12rpx;
+}
+
+.user-name {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.user-role {
+  font-size: 26rpx;
+  color: #4A90E2;
+}
+
+/* 订单时间 */
+.order-time {
+  font-size: 24rpx;
+  color: #999;
+  padding: 8rpx 0;
+}
+
+/* 操作按钮 */
+.order-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f0f0f0;
+  margin-top: 16rpx;
+}
+
+.btn {
+  margin-left: 16rpx;
+  border-radius: 32rpx;
+  font-size: 24rpx;
+  padding: 0 24rpx;
+  line-height: 56rpx;
+  height: 56rpx;
+}
+
+.btn-primary {
+  background-color: #4A90E2;
+  color: #fff;
+}
+
+.btn-default {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.btn-chat {
+  background-color: #fff;
+  color: #4A90E2;
+  border: 1rpx solid #4A90E2;
+}
+
+/* 加载状态 */
+.loading-tip {
+  text-align: center;
+  padding: 30rpx;
+  font-size: 26rpx;
+  color: #999;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100rpx 0;
+}
+
+.empty-icon {
+  width: 200rpx;
+  height: 200rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999;
+}

@@ -4,7 +4,11 @@
     "pages/detail/detail",
     "pages/publish/publish",
     "pages/message/message",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/login/index",
+    "pages/chat/chat",
+    "pages/order/order",
+    "pages/order/detail"
   ],
   "window": {
     "backgroundTextStyle": "light",

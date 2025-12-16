@@ -1,0 +1,134 @@
+<!--pages/order/detail.wxml-->
+<view class="container" wx:if="{{!loading && order}}">
+  <!-- 状态卡片 -->
+  <view class="status-card status-{{order.status}}">
+    <view class="status-icon">
+      <text wx:if="{{order.status === 0}}">⏳</text>
+      <text wx:elif="{{order.status === 1}}">📦</text>
+      <text wx:elif="{{order.status === 2}}">✅</text>
+      <text wx:else>❌</text>
+    </view>
+    <view class="status-info">
+      <text class="status-text">{{order.statusText}}</text>
+      <text class="status-desc" wx:if="{{order.status === 0}}">等待卖家确认订单</text>
+      <text class="status-desc" wx:elif="{{order.status === 1}}">请尽快完成线下交易</text>
+      <text class="status-desc" wx:elif="{{order.status === 2}}">交易已完成</text>
+      <text class="status-desc" wx:else>订单已取消</text>
+    </view>
+  </view>
+
+  <!-- 商品信息 -->
+  <view class="section" bindtap="goToGoods">
+    <view class="section-title">商品信息</view>
+    <view class="goods-card">
+      <image class="goods-image" src="{{order.goodsImage || '/images/default-book.png'}}" mode="aspectFill"></image>
+      <view class="goods-info">
+        <text class="goods-name">{{order.goodsName}}</text>
+        <text class="goods-price">¥{{order.price}}</text>
+      </view>
+      <view class="arrow">›</view>
+    </view>
+  </view>
+
+  <!-- 买卖双方信息 -->
+  <view class="section">
+    <view class="section-title">交易双方</view>
+    
+    <!-- 买家信息 -->
+    <view class="user-card">
+      <view class="user-label">买家</view>
+      <image class="user-avatar" src="{{order.buyerAvatar || '/images/default-avatar.png'}}"></image>
+      <text class="user-name">{{order.buyerName || '用户'}}</text>
+      <text class="user-tag" wx:if="{{order.isBuyer}}">我</text>
+    </view>
+    
+    <!-- 卖家信息 -->
+    <view class="user-card">
+      <view class="user-label">卖家</view>
+      <image class="user-avatar" src="{{order.sellerAvatar || '/images/default-avatar.png'}}"></image>
+      <text class="user-name">{{order.sellerName || '用户'}}</text>
+      <text class="user-tag" wx:if="{{order.isSeller}}">我</text>
+    </view>
+  </view>
+
+  <!-- 订单信息 -->
+  <view class="section">
+    <view class="section-title">订单信息</view>
+    
+    <view class="info-item" bindtap="copyOrderNo">
+      <text class="info-label">订单号</text>
+      <text class="info-value">{{order.orderNo}}</text>
+      <text class="copy-btn">复制</text>
+    </view>
+    
+    <view class="info-item">
+      <text class="info-label">创建时间</text>
+      <text class="info-value">{{order.createTimeText}}</text>
+    </view>
+    
+    <view class="info-item" wx:if="{{order.confirmTime}}">
+      <text class="info-label">确认时间</text>
+      <text class="info-value">{{order.confirmTimeText}}</text>
+    </view>
+    
+    <view class="info-item" wx:if="{{order.finishTime}}">
+      <text class="info-label">完成时间</text>
+      <text class="info-value">{{order.finishTimeText}}</text>
+    </view>
+    
+    <view class="info-item" wx:if="{{order.cancelTime}}">
+      <text class="info-label">取消时间</text>
+      <text class="info-value">{{order.cancelTimeText}}</text>
+    </view>
+    
+    <view class="info-item" wx:if="{{order.cancelReason}}">
+      <text class="info-label">取消原因</text>
+      <text class="info-value">{{order.cancelReason}}</text>
+    </view>
+  </view>
+
+  <!-- 买家留言 -->
+  <view class="section" wx:if="{{order.buyerMessage}}">
+    <view class="section-title">买家留言</view>
+    <view class="message-content">{{order.buyerMessage}}</view>
+  </view>
+
+  <!-- 交易地点 -->
+  <view class="section" wx:if="{{order.tradeLocation}}">
+    <view class="section-title">交易地点</view>
+    <view class="location-content">{{order.tradeLocation}}</view>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <view class="bottom-actions">
+    <!-- 联系对方 -->
+    <button class="action-btn btn-chat" bindtap="contactUser">
+      联系{{order.isBuyer ? '卖家' : '买家'}}
+    </button>
+    
+    <!-- 待确认状态 - 卖家可以确认 -->
+    <block wx:if="{{order.status === 0}}">
+      <button class="action-btn btn-primary" wx:if="{{order.isSeller}}" bindtap="confirmOrder">
+        确认订单
+      </button>
+      <button class="action-btn btn-cancel" bindtap="cancelOrder">
+        取消订单
+      </button>
+    </block>
+    
+    <!-- 已确认状态 - 双方可以完成或取消 -->
+    <block wx:elif="{{order.status === 1}}">
+      <button class="action-btn btn-primary" bindtap="finishOrder">
+        完成交易
+      </button>
+      <button class="action-btn btn-cancel" bindtap="cancelOrder">
+        取消订单
+      </button>
+    </block>
+  </view>
+</view>
+
+<!-- 加载状态 -->
+<view class="loading-container" wx:if="{{loading}}">
+  <text class="loading-text">加载中...</text>
+</view>

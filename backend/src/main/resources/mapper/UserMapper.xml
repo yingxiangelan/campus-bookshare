@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.bookshare.mapper.UserMapper">
+    
+    <!-- 根据openid查询用户 -->
+    <select id="selectByOpenId" resultType="com.campus.bookshare.entity.User">
+        SELECT 
+            id, openid, nick_name, avatar, phone, email, 
+            student_id, school, major, campus, certified, 
+            status, create_time, update_time, is_deleted
+        FROM user
+        WHERE openid = #{openId} AND is_deleted = 0
+        LIMIT 1
+    </select>
+    
+</mapper>

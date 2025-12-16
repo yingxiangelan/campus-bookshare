@@ -27,7 +27,8 @@ Page({
       description: '',
       isCollected: false,
       sellerId: ''
-    }
+    },
+    canPurchase: true  // 是否可以购买
   },
 
   onLoad(options) {
@@ -43,6 +44,7 @@ Page({
     // 页面显示时刷新数据
     if (this.data.bookId) {
       this.loadBookDetail();
+      this.checkCanPurchase();
     }
   },
 
@@ -51,15 +53,62 @@ Page({
     util.showLoading('加载中...');
     
     api.goods.getDetail(this.data.bookId).then(res => {
-      // 格式化数据
-      res.publishTime = util.timeAgo(res.createTime);
+      console.log('详情接口返回:', res);  // 调试日志
+      
+      // 解析数据 - 兼容多种格式
+      let detail = null;
+      
+      if (res && res.code === 200 && res.data) {
+        // 格式: {code: 200, data: {...}}
+        detail = res.data;
+      } else if (res && !res.code) {
+        // 直接返回详情对象
+        detail = res;
+      }
+      
+      if (!detail) {
+        util.hideLoading();
+        wx.showToast({
+          title: '商品不存在',
+          icon: 'none'
+        });
+        setTimeout(() => wx.navigateBack(), 1500);
+        return;
+      }
+      
+      // 格式化发布时间
+      if (detail.createTime) {
+        detail.publishTime = util.timeAgo(detail.createTime);
+      }
+      
+      // 处理图片（确保是数组）
+      if (detail.images) {
+        if (typeof detail.images === 'string') {
+          // 如果是逗号分隔的字符串，转为数组
+          detail.images = detail.images.split(',').map(img => img.trim()).filter(img => img);
+        }
+      } else {
+        detail.images = [];
+      }
+      
+      // 设置默认值
+      detail.sellerAvatar = detail.sellerAvatar || '/images/default-avatar.png';
+      detail.sellerName = detail.sellerName || '卖家';
+      detail.viewCount = detail.viewCount || 0;
+      detail.isCollected = detail.isCollected || false;
+      
+      console.log('解析后的详情:', detail);  // 调试日志
       
       this.setData({
-        bookDetail: res
+        bookDetail: detail
       });
       
       util.hideLoading();
-    }).catch(() => {
+      
+      // 检查是否可购买
+      this.checkCanPurchase();
+    }).catch((err) => {
+      console.error('加载详情失败:', err);
       util.hideLoading();
       wx.showModal({
         title: '提示',
@@ -72,6 +121,19 @@ Page({
           }
         }
       });
+    });
+  },
+
+  // 检查是否可以购买
+  checkCanPurchase() {
+    api.order.checkPurchase(this.data.bookId).then(res => {
+      if (res && res.code === 200 && res.data) {
+        this.setData({
+          canPurchase: res.data.canPurchase
+        });
+      }
+    }).catch(err => {
+      console.error('检查购买状态失败:', err);
     });
   },
 
@@ -125,9 +187,9 @@ Page({
       return;
     }
 
-    // 跳转到消息页面，并传递卖家ID
+    // 跳转到聊天页面，并传递卖家ID
     wx.navigateTo({
-      url: `/pages/message/chat?userId=${this.data.bookDetail.sellerId}&bookId=${this.data.bookId}`
+      url: `/pages/chat/chat?userId=${this.data.bookDetail.sellerId}&goodsId=${this.data.bookId}`
     });
   },
 
@@ -146,33 +208,94 @@ Page({
       return;
     }
 
+    // 检查是否为自己的商品
+    const userInfo = app.globalData.userInfo;
+    if (userInfo && userInfo.id === this.data.bookDetail.sellerId) {
+      wx.showToast({
+        title: '不能购买自己的商品',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 检查是否可购买
+    if (!this.data.canPurchase) {
+      wx.showToast({
+        title: '该商品有订单正在处理中',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 检查商品状态
+    if (this.data.bookDetail.status !== 0) {
+      wx.showToast({
+        title: '商品已下架或已售出',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 显示购买确认弹窗（带留言输入）
     wx.showModal({
       title: '确认购买',
-      content: `确认要购买《${this.data.bookDetail.bookName}》吗？`,
+      content: `确认要购买《${this.data.bookDetail.bookName}》吗？\n价格：¥${this.data.bookDetail.price}`,
+      editable: true,
+      placeholderText: '给卖家留言（可选）',
       success: (res) => {
         if (res.confirm) {
-          // 创建订单
-          api.order.create({
-            goodsId: this.data.bookId,
-            sellerId: this.data.bookDetail.sellerId
-          }).then(() => {
-            wx.showToast({
-              title: '购买成功',
-              icon: 'success'
-            });
-            
-            setTimeout(() => {
-              // 跳转到消息页面与卖家沟通
-              this.contactSeller();
-            }, 1500);
-          }).catch(() => {
-            wx.showToast({
-              title: '购买失败',
-              icon: 'none'
-            });
-          });
+          this.createOrder(res.content);
         }
       }
+    });
+  },
+
+  // 创建订单
+  createOrder(buyerMessage) {
+    util.showLoading('提交订单中...');
+    
+    api.order.create({
+      goodsId: this.data.bookId,
+      buyerMessage: buyerMessage || ''
+    }).then(res => {
+      util.hideLoading();
+      
+      if (res && res.code === 200 && res.data) {
+        const orderData = res.data;
+        
+        wx.showModal({
+          title: '下单成功',
+          content: `订单号：${orderData.orderNo}\n请等待卖家确认，您可以先与卖家沟通交易细节。`,
+          confirmText: '查看订单',
+          cancelText: '联系卖家',
+          success: (modalRes) => {
+            if (modalRes.confirm) {
+              // 查看订单详情
+              wx.navigateTo({
+                url: `/pages/order/detail?id=${orderData.id}`
+              });
+            } else {
+              // 联系卖家
+              this.contactSeller();
+            }
+          }
+        });
+        
+        // 更新购买状态
+        this.setData({ canPurchase: false });
+      } else {
+        wx.showToast({
+          title: res.message || '下单失败',
+          icon: 'none'
+        });
+      }
+    }).catch(err => {
+      util.hideLoading();
+      console.error('创建订单失败:', err);
+      wx.showToast({
+        title: '网络错误，请重试',
+        icon: 'none'
+      });
     });
   }
 });

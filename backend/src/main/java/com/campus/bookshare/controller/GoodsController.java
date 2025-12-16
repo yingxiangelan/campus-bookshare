@@ -1,20 +1,31 @@
 package com.campus.bookshare.controller;
 
 import com.campus.bookshare.common.Result;
+import com.campus.bookshare.entity.Goods;
+import com.campus.bookshare.service.GoodsService;
+import com.campus.bookshare.util.JwtUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 商品Controller
+ * 融合版：保留完整CRUD + 适配前端返回格式
  */
 @RestController
 @RequestMapping("/goods")
 @CrossOrigin
 public class GoodsController {
 
+    @Autowired
+    private GoodsService goodsService;
+
     /**
      * 获取商品列表
+     * 前端调用: GET /api/goods/list
      */
     @GetMapping("/list")
     public Result<?> getList(
@@ -24,132 +35,169 @@ public class GoodsController {
             @RequestParam(required = false) String major,
             @RequestParam(defaultValue = "time") String sortType) {
         
-        // 模拟返回数据
-        Map<String, Object> data = new HashMap<>();
-        data.put("list", getMockGoodsList());
-        data.put("hasMore", true);
-        data.put("total", 20);
-        
-        return Result.success(data);
+        try {
+            List<Goods> goodsList = goodsService.getGoodsList(campus, major, page, pageSize);
+            
+            // 转换为前端需要的格式
+            List<Map<String, Object>> list = goodsList.stream().map(goods -> {
+                Map<String, Object> item = new HashMap<>();
+                item.put("id", goods.getId());
+                item.put("bookName", goods.getBookName());
+                item.put("author", goods.getAuthor());
+                item.put("price", goods.getPrice());
+                item.put("originalPrice", goods.getOriginalPrice());
+                item.put("condition", goods.getCondition());
+                item.put("campus", goods.getCampus());
+                item.put("major", goods.getMajor());
+                item.put("coverUrl", goods.getCoverUrl());  // 使用实体类的便捷方法
+                item.put("status", goods.getStatus());
+                item.put("statusText", goods.getStatusText());
+                return item;
+            }).collect(Collectors.toList());
+            
+            Map<String, Object> data = new HashMap<>();
+            data.put("list", list);
+            data.put("hasMore", goodsList.size() == pageSize);
+            data.put("total", list.size());
+            
+            return Result.success(data);
+        } catch (Exception e) {
+            return Result.error("获取商品列表失败: " + e.getMessage());
+        }
     }
 
     /**
      * 获取商品详情
+     * 前端调用: GET /api/goods/detail/{id}
      */
     @GetMapping("/detail/{id}")
     public Result<?> getDetail(@PathVariable Long id) {
-        Map<String, Object> detail = new HashMap<>();
-        detail.put("id", id);
-        detail.put("bookName", "深入理解计算机系统");
-        detail.put("author", "Randal E.Bryant");
-        detail.put("publisher", "机械工业出版社");
-        detail.put("isbn", "9787111544937");
-        detail.put("originalPrice", 139.00);
-        detail.put("price", 80.00);
-        detail.put("condition", "9成新");
-        detail.put("campus", "国际校区");
-        detail.put("major", "计算机科学与技术");
-        detail.put("courseName", "计算机组成原理");
-        detail.put("description", "书籍保存完好，无笔记，适合计算机专业学生");
-        detail.put("images", Arrays.asList(
-            "https://dummyimage.com/600x800",
-            "https://dummyimage.com/600x800"
-        ));
-        detail.put("sellerAvatar", "https://dummyimage.com/150");
-        detail.put("sellerName", "张同学");
-        detail.put("sellerCertified", true);
-        detail.put("sellerRate", 98);
-        detail.put("publishTime", "2天前");
-        detail.put("viewCount", 125);
-        detail.put("isCollected", false);
-        detail.put("sellerId", 1L);
-        detail.put("createTime", System.currentTimeMillis());
-        
-        return Result.success(detail);
+        try {
+            Map<String, Object> detail = goodsService.getGoodsDetail(id);
+            if (detail == null) {
+                return Result.error("商品不存在或已删除");
+            }
+            return Result.success(detail);
+        } catch (Exception e) {
+            return Result.error("获取商品详情失败: " + e.getMessage());
+        }
     }
 
     /**
      * 发布商品
+     * 前端调用: POST /api/goods/publish
      */
     @PostMapping("/publish")
-    public Result<?> publish(@RequestBody Map<String, Object> data) {
-        // 实际项目中这里会保存到数据库
-        return Result.success("发布成功");
+    public Result<?> publish(@RequestBody Map<String, Object> data,
+                            HttpServletRequest request) {
+        try {
+            // 优先从Token获取用户ID
+            String token = request.getHeader("Authorization");
+            Long userId = JwtUtils.getUserId(token);
+            
+            // 如果Token无效，尝试从请求体获取
+            if (userId == null && data.get("userId") != null) {
+                userId = Long.valueOf(data.get("userId").toString());
+            }
+            
+            // 如果仍然没有，使用默认用户ID（仅用于测试）
+            if (userId == null) {
+                userId = 1L;
+            }
+            
+            goodsService.publishGoods(userId, data);
+            return Result.success("发布成功");
+        } catch (Exception e) {
+            return Result.error("发布失败: " + e.getMessage());
+        }
     }
 
     /**
      * 获取我的商品
+     * 前端调用: GET /api/goods/my
      */
     @GetMapping("/my")
-    public Result<?> getMyGoods() {
-        List<Map<String, Object>> list = getMockGoodsList();
-        return Result.success(list);
+    public Result<?> getMyGoods(HttpServletRequest request,
+                               @RequestParam(required = false) Long userId) {
+        try {
+            // 优先从Token获取用户ID
+            String token = request.getHeader("Authorization");
+            Long tokenUserId = JwtUtils.getUserId(token);
+            
+            if (tokenUserId != null) {
+                userId = tokenUserId;
+            } else if (userId == null) {
+                return Result.error(401, "未登录");
+            }
+            
+            List<Goods> goodsList = goodsService.getMyGoods(userId);
+            
+            // 转换为前端需要的格式
+            List<Map<String, Object>> list = goodsList.stream().map(goods -> {
+                Map<String, Object> item = new HashMap<>();
+                item.put("id", goods.getId());
+                item.put("bookName", goods.getBookName());
+                item.put("author", goods.getAuthor());
+                item.put("price", goods.getPrice());
+                item.put("originalPrice", goods.getOriginalPrice());
+                item.put("condition", goods.getCondition());
+                item.put("campus", goods.getCampus());
+                item.put("major", goods.getMajor());
+                item.put("coverUrl", goods.getCoverUrl());
+                item.put("status", goods.getStatus());
+                item.put("statusText", goods.getStatusText());
+                return item;
+            }).collect(Collectors.toList());
+            
+            return Result.success(list);
+        } catch (Exception e) {
+            return Result.error("获取我的商品失败: " + e.getMessage());
+        }
     }
 
     /**
      * 更新商品状态
+     * 前端调用: PUT /api/goods/{id}/status
      */
     @PutMapping("/{id}/status")
-    public Result<?> updateStatus(@PathVariable Long id, @RequestBody Map<String, Object> data) {
-        return Result.success("更新成功");
+    public Result<?> updateStatus(@PathVariable Long id, 
+                                 @RequestBody Map<String, Object> data) {
+        try {
+            Integer status = null;
+            if (data.get("status") != null) {
+                status = Integer.valueOf(data.get("status").toString());
+            }
+            
+            if (status == null) {
+                return Result.error("状态参数不能为空");
+            }
+            
+            boolean success = goodsService.updateGoodsStatus(id, status);
+            if (success) {
+                return Result.success("更新成功");
+            } else {
+                return Result.error("更新失败，商品不存在或已删除");
+            }
+        } catch (Exception e) {
+            return Result.error("更新失败: " + e.getMessage());
+        }
     }
 
     /**
      * 删除商品
+     * 前端调用: DELETE /api/goods/{id}
      */
     @DeleteMapping("/{id}")
     public Result<?> delete(@PathVariable Long id) {
-        return Result.success("删除成功");
-    }
-
-    /**
-     * 模拟商品列表数据
-     */
-    private List<Map<String, Object>> getMockGoodsList() {
-        List<Map<String, Object>> list = new ArrayList<>();
-        
-        Map<String, Object> item1 = new HashMap<>();
-        item1.put("id", 1L);
-        item1.put("bookName", "深入理解计算机系统");
-        item1.put("author", "Randal E.Bryant");
-        item1.put("price", 80.00);
-        item1.put("originalPrice", 139.00);
-        item1.put("condition", "9成新");
-        item1.put("campus", "国际校区");
-        item1.put("major", "计算机科学与技术");
-        item1.put("coverUrl", "https://dummyimage.com/300x400");
-        item1.put("status", 0);
-        item1.put("statusText", "在售");
-        list.add(item1);
-        
-        Map<String, Object> item2 = new HashMap<>();
-        item2.put("id", 2L);
-        item2.put("bookName", "Python编程：从入门到实践");
-        item2.put("author", "Eric Matthes");
-        item2.put("price", 50.00);
-        item2.put("originalPrice", 89.00);
-        item2.put("condition", "8成新");
-        item2.put("campus", "五山校区");
-        item2.put("major", "软件工程");
-        item2.put("coverUrl", "https://dummyimage.com/300x400");
-        item2.put("status", 0);
-        item2.put("statusText", "在售");
-        list.add(item2);
-        
-        Map<String, Object> item3 = new HashMap<>();
-        item3.put("id", 3L);
-        item3.put("bookName", "数据结构与算法分析");
-        item3.put("author", "Mark Allen Weiss");
-        item3.put("price", 35.00);
-        item3.put("originalPrice", 59.00);
-        item3.put("condition", "9成新");
-        item3.put("campus", "国际校区");
-        item3.put("major", "计算机科学与技术");
-        item3.put("coverUrl", "https://dummyimage.com/300x400");
-        item3.put("status", 0);
-        item3.put("statusText", "在售");
-        list.add(item3);
-        
-        return list;
+        try {
+            boolean success = goodsService.deleteGoods(id);
+            if (success) {
+                return Result.success("删除成功");
+            } else {
+                return Result.error("删除失败，商品不存在");
+            }
+        } catch (Exception e) {
+            return Result.error("删除失败: " + e.getMessage());
+        }
     }
 }

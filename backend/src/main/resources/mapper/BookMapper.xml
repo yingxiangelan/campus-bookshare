@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campus.bookshare.mapper.BookMapper">
+    
+    <!-- 根据ISBN查询书籍 -->
+    <select id="selectByISBN" resultType="com.campus.bookshare.entity.Book">
+        SELECT * FROM book
+        WHERE isbn = #{isbn}
+        LIMIT 1
+    </select>
+    
+    <!-- 根据书名搜索书籍 -->
+    <select id="searchByBookName" resultType="com.campus.bookshare.entity.Book">
+        SELECT * FROM book
+        WHERE book_name LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY create_time DESC
+        LIMIT 20
+    </select>
+    
+</mapper>
+
