@@ -140,13 +140,13 @@ campus-bookshare/
 │   │   ├── 📂 detail/                 # 商品详情页
 │   │   ├── 📂 publish/                # 发布页
 │   │   ├── 📂 message/                # 消息列表页
-│   │   ├── 📂 chat/                   # 聊天详情页 ⭐新增
+│   │   ├── 📂 chat/                   # 聊天详情页 
 │   │   ├── 📂 profile/                # 个人中心
 │   │   └── 📂 login/                  # 登录页
 │   ├── 📂 utils/                      # 工具类
 │   │   ├── request.js                 # HTTP请求封装
 │   │   ├── api.js                     # API接口定义
-│   │   ├── socket.js                  # WebSocket封装 ⭐新增
+│   │   ├── socket.js                  # WebSocket封装 
 │   │   └── util.js                    # 通用工具函数
 │   ├── 📂 images/                     # 图片资源
 │   ├── app.js                         # 全局逻辑
@@ -170,9 +170,9 @@ campus-bookshare/
 │   │   │   ├── 📂 entity/             # 实体类
 │   │   │   ├── 📂 dto/                # 数据传输对象
 │   │   │   ├── 📂 common/             # 通用类
-│   │   │   ├── 📂 config/             # 配置类 ⭐新增
+│   │   │   ├── 📂 config/             # 配置类 
 │   │   │   │   └── WebSocketConfig.java
-│   │   │   ├── 📂 socket/             # WebSocket ⭐新增
+│   │   │   ├── 📂 socket/             # WebSocket 
 │   │   │   │   └── WebSocketServer.java
 │   │   │   └── 📂 util/               # 工具类
 │   │   └── 📂 resources/
@@ -180,7 +180,7 @@ campus-bookshare/
 │   │       └── application.yml        # 配置文件
 │   └── pom.xml                        # Maven配置
 │
-├── 📂 CodeDetection/                  # Python识别服务 ⭐新增
+├── 📂 CodeDetection/                  # Python识别服务 
 │   ├── CodeDetection.py               # FastAPI主服务
 │   ├── init_db.py                     # 数据库初始化
 │   ├── requirements.txt               # Python依赖
